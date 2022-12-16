@@ -17,12 +17,14 @@
     </div>
     <el-scrollbar class="todoListScroll">
       <div class="todoList">
-        <div class="todoItem" v-for="(item, index) in todoList" :key="index">
+        <div class="todoItem" v-for="(item, index) in todoList" :key="item.id">
           <el-popover placement="right" trigger="hover">
             <template #reference>
               <el-checkbox
                 v-model="item.status"
-                :label="item.name"
+                :label="item.content"
+                :true-label="1"
+                :false-label="0"
                 @change="changeTodoStatus(item.status, index)"
               />
             </template>
@@ -32,7 +34,7 @@
             <el-icon
               size="20px"
               class="deleteIcon"
-              @click="deleteTodoItem(index)"
+              @click="deleteTodoItem(item.id)"
               ><Delete
             /></el-icon>
           </el-popover>
@@ -45,7 +47,11 @@
       width="30%"
       :before-close="handleClose"
     >
-      <el-input v-model="inputTodoItem" placeholder="Please input" />
+      <el-input
+        v-model="inputTodoItem"
+        maxlength="200"
+        placeholder="Please input"
+      />
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleClose">Cancel</el-button>
@@ -59,37 +65,47 @@
 <script>
 import moment from "moment";
 import { ElMessage, ElMessageBox } from "element-plus";
+import http from "../http/http.js";
 export default {
-  name: "NoteCom",
-  props: {},
+  name: "TodoCom",
+  props: {
+    userId: {
+      type: String,
+      default: "",
+      require: true,
+    },
+  },
   data() {
     return {
       dateVal: moment(new Date()).format("YYYY-MM-DD"),
-      todoList: [
-        {
-          name: "what need to do xxxx",
-          status: false,
-        },
-        {
-          name: "what need to do xxxx 2",
-          status: true,
-        },
-        {
-          name: "what need to do xxxx 3",
-          status: false,
-        },
-      ],
+      todoList: [],
       addDialogVisible: false,
       editIndex: -1,
       inputTodoItem: "",
     };
   },
-  mounted() {},
+  mounted() {
+    this.getSelectedDate(this.dateVal);
+  },
   watch: {},
   methods: {
-    // get selected date
+    // get todo list on selected date
     getSelectedDate(val) {
-      console.log("selected date:" + val);
+      // console.log("selected date:" + val);
+      http
+        .post("/getTodoList", { date: val, userId: parseInt(this.userId) })
+        .then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Get todoList successful") {
+              this.todoList = res.data.todoList;
+            } else {
+              ElMessage({
+                message: "fail to get Todo List.",
+                type: "error",
+              });
+            }
+          }
+        });
     },
     // show add todo item dialog
     addNewTodoList() {
@@ -98,16 +114,53 @@ export default {
     },
     // save new todo item to database
     saveNewTodoItem() {
-      console.log(this.dateVal, this.inputTodoItem, this.editIndex);
       if (this.editIndex == -1) {
-        this.todoList.push({
-          name: this.inputTodoItem,
-          status: false,
+        let obj = {
+          date: this.dateVal,
+          content: this.inputTodoItem,
+          userId: parseInt(this.userId),
+          status: 0,
+        };
+        http.post("/todoAdd", obj).then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Add success") {
+              ElMessage({
+                message: "Add Todo Item successful.",
+                type: "success",
+              });
+              this.getSelectedDate(this.dateVal);
+            } else {
+              ElMessage({
+                message: "fail to add new Todo Item.",
+                type: "error",
+              });
+            }
+          }
         });
         this.inputTodoItem = "";
         this.addDialogVisible = false;
       } else {
-        this.todoList[this.editIndex].name = this.inputTodoItem;
+        let editObj = {
+          content: this.inputTodoItem,
+          status: parseInt(this.todoList[this.editIndex].status),
+          id: parseInt(this.todoList[this.editIndex].id),
+        };
+        http.post("/todoEdit", editObj).then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Edit success") {
+              ElMessage({
+                message: "Edit Todo Item successful.",
+                type: "success",
+              });
+              this.getSelectedDate(this.dateVal);
+            } else {
+              ElMessage({
+                message: "fail to add new Todo Item.",
+                type: "error",
+              });
+            }
+          }
+        });
         this.inputTodoItem = "";
         this.addDialogVisible = false;
       }
@@ -119,27 +172,54 @@ export default {
     },
     // save the changes of Todo List status
     changeTodoStatus(status, index) {
-      console.log(status, index);
+      let editObj = {
+        content: this.todoList[index].content,
+        status: parseInt(status),
+        id: parseInt(this.todoList[index].id),
+      };
+      http.post("/todoEdit", editObj).then((res) => {
+        if (res.code === 0) {
+          if (res.data.msg == "Edit success") {
+            this.getSelectedDate(this.dateVal);
+          } else {
+            ElMessage({
+              message: "fail to change Todo Item status.",
+              type: "error",
+            });
+          }
+        }
+      });
     },
     // edit todo item
     editTodoItem(index) {
-      this.inputTodoItem = this.todoList[index].name;
+      this.inputTodoItem = this.todoList[index].content;
       this.editIndex = index;
       this.addDialogVisible = true;
     },
     // delete todo item
-    deleteTodoItem(index) {
+    deleteTodoItem(id) {
       ElMessageBox.confirm("Confirm delete selected todo item?", "Warning", {
         confirmButtonText: "Ok",
         cancelButtonText: "Cancel",
         type: "warning",
       }).then(() => {
-        this.todoList.splice(index, 1);
-        ElMessage({
-          type: "success",
-          message: "Delete successfully",
+        http.post("/todoDelete", { id: parseInt(id) }).then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Delete success") {
+              ElMessage({
+                message: "Delete successfully.",
+                type: "success",
+              });
+              this.getSelectedDate(this.dateVal);
+            } else {
+              ElMessage({
+                message: "fail to delete Todo Item.",
+                type: "error",
+              });
+            }
+          }
         });
-      }, 500);
+      });
     },
   },
 };
@@ -173,8 +253,10 @@ export default {
       text-align: left;
       width: 800px;
       .todoItem {
-        overflow: hidden;
         margin: 5px 16px;
+        .is-checked {
+          text-decoration: line-through;
+        }
       }
     }
   }

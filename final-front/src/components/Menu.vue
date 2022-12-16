@@ -9,7 +9,7 @@
       @click="gotoHomePage"
     >
       <el-icon class="userIcon" size="35px"><Avatar /></el-icon>
-      <span>Hello, {{ userName }}</span>
+      <span>{{ userName }}</span>
     </div>
     <div
       class="userInfoClose"
@@ -142,19 +142,16 @@ export default {
     left: 0;
     width: 100%;
     height: 80px;
-    padding-top: 10px;
+    padding-top: 6px;
     border-bottom: 1px #dcdfe6 solid;
-    font-size: 24px;
-    text-align: left;
+    font-size: 22px;
+    text-align: center;
     z-index: 999;
     .userIcon {
-      margin-left: 16px;
       padding: 6px;
       border: 1px solid;
       border-radius: 35px;
-    }
-    span {
-      margin-left: 16px;
+      margin-right: 4px;
     }
   }
   .userInfoClose {

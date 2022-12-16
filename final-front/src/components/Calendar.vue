@@ -17,8 +17,18 @@
       </el-scrollbar>
       <el-scrollbar class="todoListScroll">
         <div class="todoList">
-          <div class="todoItem" v-for="(item, index) in todoList" :key="index">
-            <el-checkbox v-model="item.status" :label="item.name" />
+          <div
+            class="todoItem"
+            v-for="(item, index) in todoList"
+            :key="item.id"
+          >
+            <el-checkbox
+              v-model="item.status"
+              :label="item.content"
+              :true-label="1"
+              :false-label="0"
+              @change="changeTodoStatus(item.status, index)"
+            />
           </div>
         </div>
       </el-scrollbar>
@@ -27,6 +37,9 @@
 </template>
   
 <script>
+import moment from "moment";
+import { ElMessage } from "element-plus";
+import http from "../http/http.js";
 export default {
   name: "CalendarComp",
   props: {
@@ -34,26 +47,65 @@ export default {
       type: Array,
       default: () => [],
     },
-    todoList: {
-      type: Array,
-      default: () => [],
+    userId: {
+      type: String,
+      default: "",
+      require: true,
     },
   },
   data() {
     return {
       todayDate: new Date(),
+      todoList: {},
     };
   },
-  mounted() {},
+  mounted() {
+    this.getSelectedDate(moment(this.todayDate).format("YYYY-MM-DD"));
+  },
   watch: {
     todayDate(val) {
-      this.getDate(val);
+      this.getSelectedDate(moment(val).format("YYYY-MM-DD"));
     },
   },
   methods: {
-    // get the date chosen in calendar
-    getDate(val) {
-      console.log(val);
+    // get todo list by date
+    getSelectedDate(val) {
+      http
+        .post("/getTodoList", {
+          date: val,
+          userId: parseInt(this.userId),
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Get todoList successful") {
+              this.todoList = res.data.todoList;
+            } else {
+              ElMessage({
+                message: "fail to get Todo List.",
+                type: "error",
+              });
+            }
+          }
+        });
+    },
+    changeTodoStatus(status, index) {
+      let editObj = {
+        content: this.todoList[index].content,
+        status: parseInt(status),
+        id: parseInt(this.todoList[index].id),
+      };
+      http.post("/todoEdit", editObj).then((res) => {
+        if (res.code === 0) {
+          if (res.data.msg == "Edit success") {
+            this.getSelectedDate(moment(this.todayDate).format("YYYY-MM-DD"));
+          } else {
+            ElMessage({
+              message: "fail to change Todo Item status.",
+              type: "error",
+            });
+          }
+        }
+      });
     },
   },
 };
@@ -108,8 +160,10 @@ export default {
         text-align: left;
         max-width: 780px;
         .todoItem {
-          overflow: hidden;
           margin: 5px 7px;
+          .is-checked {
+            text-decoration: line-through;
+          }
         }
       }
     }

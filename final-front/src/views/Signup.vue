@@ -14,6 +14,7 @@
           <el-input
             v-model="signupForm.name"
             placeholder="Please input name"
+            maxlength="16"
             clearable
           />
         </el-form-item>
@@ -22,6 +23,7 @@
             type="password"
             v-model="signupForm.password"
             placeholder="Please input password"
+            maxlength="16"
             show-password
             clearable
           />
@@ -31,6 +33,7 @@
             type="password"
             v-model="signupForm.confirmPassword"
             placeholder="Please confirm password"
+            maxlength="16"
             show-password
             clearable
           />
@@ -175,6 +178,9 @@ export default {
         color: #409eff;
       }
     }
+  }
+  .sidebar {
+    text-decoration: underline double;
   }
 }
 </style>

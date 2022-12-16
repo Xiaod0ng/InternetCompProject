@@ -14,6 +14,7 @@
           <el-input
             v-model="loginForm.name"
             placeholder="Please input name"
+            maxlength="16"
             clearable
           />
         </el-form-item>
@@ -22,6 +23,7 @@
             type="password"
             v-model="loginForm.password"
             placeholder="Please input password"
+            maxlength="16"
             show-password
             clearable
           />
@@ -65,6 +67,7 @@ export default {
           },
         ],
       },
+      userInfo: {},
     };
   },
   mounted() {},
@@ -81,9 +84,10 @@ export default {
                   message: "Log in successful.",
                   type: "success",
                 });
+                this.userInfo = { ...res.data.userInfo }; // get user info
                 // go to home page after 1.5s
                 setTimeout(() => {
-                  that.$router.push({ name: "home" });
+                  that.$router.push({ path: "/home", query: that.userInfo });
                 }, 1500);
               } else {
                 ElMessage({

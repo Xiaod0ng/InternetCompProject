@@ -3,25 +3,29 @@
     <div class="homePage">
       <MenuComp
         class="menuComp"
-        :userName="userInfo.name"
+        :userName="userInfo.userName"
         @changeToToday="changeToToday"
         @getMenuIndex="getMenuIndex"
       ></MenuComp>
       <TodayComp
         class="contentComp"
         :noteList="noteList"
-        :todoList="todoList"
+        :userId="userInfo.userId"
         @changeToCalendar="changeToCalendar"
-        v-if="!isCalendar && menuIndex == ''"
+        v-if="!isCalendar && menuIndex == '' && userInfo.userId"
       ></TodayComp>
       <CalendarComp
         class="contentComp"
         :noteList="noteList"
-        :todoList="todoList"
+        :userId="userInfo.userId"
         v-if="isCalendar && menuIndex == ''"
       ></CalendarComp>
       <NoteComp class="contentComp" v-if="menuIndex == 'note'"></NoteComp>
-      <TodoComp class="contentComp" v-if="menuIndex == 'todo'"></TodoComp>
+      <TodoComp
+        :userId="userInfo.userId"
+        class="contentComp"
+        v-if="menuIndex == 'todo'"
+      ></TodoComp>
     </div>
   </el-container>
 </template>
@@ -44,7 +48,8 @@ export default {
   data() {
     return {
       userInfo: {
-        name: "xxx",
+        userName: "",
+        userId: "",
       },
       noteList: [
         {
@@ -156,63 +161,12 @@ export default {
           name: "note6",
         },
       ],
-      todoList: [
-        {
-          name: "what need to do xxxx",
-          status: false,
-        },
-        {
-          name: "what need to do xxxx 2",
-          status: true,
-        },
-        {
-          name: "what need to do xxxx 3",
-          status: false,
-        },
-        {
-          name: "what need to do xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-          status: true,
-        },
-        {
-          name: "what need to do xxxwwwwx 4",
-          status: true,
-        },
-        {
-          name: "what need to do xxxx 5",
-          status: true,
-        },
-        {
-          name: "what need to do xxxx 6",
-          status: false,
-        },
-        {
-          name: "what need to do xwwwwwwwwxxx 7",
-          status: false,
-        },
-        {
-          name: "what need to do xxxx 8",
-          status: false,
-        },
-        {
-          name: "what need to do xxwwwxx 9",
-          status: false,
-        },
-        {
-          name: "what need to do xxxx 10",
-          status: false,
-        },
-        {
-          name: "what need to do xxxx 11",
-          status: true,
-        },
-        {
-          name: "what need to do xxxx 12",
-          status: false,
-        },
-      ],
       isCalendar: false,
       menuIndex: "",
     };
+  },
+  mounted() {
+    this.userInfo = { ...this.$route.query };
   },
   methods: {
     // get the selected menu index

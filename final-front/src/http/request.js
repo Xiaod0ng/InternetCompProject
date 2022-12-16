@@ -25,7 +25,12 @@ service.interceptors.response.use(
     response => {
         const res = response.data
         if (res.code == 0) {
-            return res
+             const res2 = {
+                code: res.code,
+                data: JSON.parse(JSON.stringify(res.data)),
+                msg: res.msg
+            }
+            return res2
         }
     },
     error => {

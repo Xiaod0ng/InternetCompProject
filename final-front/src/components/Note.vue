@@ -87,7 +87,8 @@
       <div class="noteArea">
         <el-input
           v-model="noteArea"
-          :rows="26"
+          :rows="24"
+          maxlength="1872"
           type="textarea"
           :disabled="!isEdit"
         />
@@ -340,7 +341,7 @@ export default {
           overflow: hidden;
           cursor: pointer;
           .addNoteIcon {
-            margin-top: 16px;
+            margin-top: 12px;
             border: 3px #c0c4cc solid;
           }
         }
@@ -353,14 +354,12 @@ export default {
       flex-direction: row;
     }
     .noteArea {
-      margin-top: 20px;
+      margin-top: 12px;
+      .el-textarea {
+        font-size: 20px !important;
+      }
     }
   }
-}
-</style>
-<style>
-.el-textarea__inner {
-  font-size: 18px !important;
 }
 </style>
 

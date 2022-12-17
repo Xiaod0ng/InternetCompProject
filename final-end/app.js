@@ -1,10 +1,16 @@
 const express = require('express')
-var bodyParser = require('body-parser');
+//const cors = require("cors");
 
 const app = express()
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
+// var corsOptions = {
+//     origin: "http://localhost:8081"
+// }
+
+//app.use(cors(corsOptions));
+
+app.use(express.json());
+app.use(express.urlencoded({
     extended: true
 }));
 
@@ -14,18 +20,13 @@ app.use((request, response, next) => { // listener
     next()
 })
 
+// connect to mysql
+const connection = require("./dbconfig/db.js")
 
 // user log in
 app.get('/api/userLogin', (request, response) => { // get request
-    var mysql = require('mysql');
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'Wuqy22878899',
-        database: 'ic_final_project'
-    });
 
-    connection.connect();
+    //connection.getConnection();
 
     console.log(request.query) // query: { name: 'dqwd', password: 'qdwd' },
     var requestQuery = request.query;
@@ -56,7 +57,7 @@ app.get('/api/userLogin', (request, response) => { // get request
                 }
             })
         }
-        connection.end();
+        //connection.end();
 
     });
 
@@ -64,15 +65,8 @@ app.get('/api/userLogin', (request, response) => { // get request
 
 // user sign up
 app.post('/api/userSignup', (request, response) => { // post request
-    var mysql = require('mysql');
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'Wuqy22878899',
-        database: 'ic_final_project'
-    });
 
-    connection.connect();
+    //connection.getConnection();
 
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
@@ -98,15 +92,8 @@ app.post('/api/userSignup', (request, response) => { // post request
                 }
             })
         } else {
-            var connection2 = mysql.createConnection({
-                host: 'localhost',
-                user: 'root',
-                password: 'Wuqy22878899',
-                database: 'ic_final_project'
-            });
-
-            connection2.connect();
-            connection2.query(signupSql, [requestBody.name, requestBody.password], function (err2, result2) {
+            //connection.getConnection();
+            connection.query(signupSql, [requestBody.name, requestBody.password], function (err2, result2) {
                 if (err2) {
                     console.log(err2)
                     response.send({
@@ -124,29 +111,21 @@ app.post('/api/userSignup', (request, response) => { // post request
                     })
                 }
             });
-            connection2.end()
+            //connection.end()
         }
     })
 
-    connection.end();
+    //connection.end();
 
 })
 
 // todoList add item
 app.post('/api/todoAdd', (request, response) => { // post request
-    var mysql = require('mysql');
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'Wuqy22878899',
-        database: 'ic_final_project'
-    });
 
-    connection.connect();
+    //connection.getConnection();
 
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
-
 
     var addTodoSql = "insert into todoList (date, content, userId, status) values (?, ?, ?, ?)"
 
@@ -168,25 +147,17 @@ app.post('/api/todoAdd', (request, response) => { // post request
             })
         }
     })
-    connection.end();
+    //connection.end();
 
 })
 
 // todoList get todo list by date
 app.post('/api/getTodoList', (request, response) => { // post request
-    var mysql = require('mysql');
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'Wuqy22878899',
-        database: 'ic_final_project'
-    });
 
-    connection.connect();
+    //connection.getConnection();
 
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
-
 
     var getTodoListSql = "select * from todoList where date = ? and userId = ?"
 
@@ -209,25 +180,17 @@ app.post('/api/getTodoList', (request, response) => { // post request
             })
         }
     })
-    connection.end();
+    //connection.end();
 
 })
 
 // todoList delete item
 app.post('/api/todoDelete', (request, response) => { // post request
-    var mysql = require('mysql');
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'Wuqy22878899',
-        database: 'ic_final_project'
-    });
 
-    connection.connect();
+    //connection.getConnection();
 
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
-
 
     var deleteTodoSql = "delete from todoList where id = ? "
 
@@ -249,25 +212,17 @@ app.post('/api/todoDelete', (request, response) => { // post request
             })
         }
     })
-    connection.end();
+    //connection.end();
 
 })
 
 // todoList edit item
 app.post('/api/todoEdit', (request, response) => { // post request
-    var mysql = require('mysql');
-    var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'Wuqy22878899',
-        database: 'ic_final_project'
-    });
 
-    connection.connect();
+    //connection.getConnection();
 
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
-
 
     var editTodoSql = "update todoList set content = ?, status = ? where id = ?"
 
@@ -289,10 +244,140 @@ app.post('/api/todoEdit', (request, response) => { // post request
             })
         }
     })
-    connection.end();
+    //connection.end();
 
 })
 
-app.listen(5000, (err) => {
-    if (!err) console.log('start server');
-}) 
+// add note
+app.post('/api/noteAdd', (request, response) => { // post request
+
+    //connection.getConnection();
+
+    console.log(request.body)
+    var requestBody = request.body;
+
+    var addNoteSql = "insert into note (title, content, date, userId) values (?, ?, ?, ?)"
+
+    connection.query(addNoteSql, [requestBody.title, requestBody.content, requestBody.date, requestBody.userId], function (err, result) {
+        if (err) {
+            console.log(err)
+            response.send({
+                code: 0,
+                msg: 'sql error',
+                data: {}
+            })
+        } else {
+            response.send({
+                code: 0,
+                msg: 'Add note successfully',
+                data: {
+                    msg: 'Add note successfully'
+                }
+            })
+        }
+    })
+    //connection.end();
+
+})
+
+// get note by date
+app.post('/api/getNote', (request, response) => { // post request
+
+    //connection.getConnection();
+
+    console.log(request.body)
+    var requestBody = request.body;
+
+    var getNoteSql = "select * from note where date = ? and userId = ?"
+
+    connection.query(getNoteSql, [requestBody.date, requestBody.userId], function (err, result) {
+        if (err) {
+            console.log(err)
+            response.send({
+                code: 0,
+                msg: 'sql error',
+                data: {}
+            })
+        } else {
+            response.send({
+                code: 0,
+                msg: 'Get note successfully',
+                data: {
+                    todoList: result,
+                    msg: 'Get note successfully'
+                }
+            })
+        }
+    })
+    //connection.end();
+
+})
+
+// delete note
+app.post('/api/noteDelete', (request, response) => { // post request
+
+    //connection.getConnection();
+
+    console.log(request.body)
+    var requestBody = request.body;
+
+    var deleteNoteSql = "delete from note where id = ? "
+
+    connection.query(deleteNoteSql, [requestBody.id], function (err, result) {
+        if (err) {
+            console.log(err)
+            response.send({
+                code: 0,
+                msg: 'sql error',
+                data: {}
+            })
+        } else {
+            response.send({
+                code: 0,
+                msg: 'Delete note successfully',
+                data: {
+                    msg: 'Delete note successfully'
+                }
+            })
+        }
+    })
+    //connection.end();
+
+})
+
+// edit note
+app.post('/api/noteEdit', (request, response) => { // post request
+
+    //connection.getConnection();
+
+    console.log(request.body)
+    var requestBody = request.body;
+
+    var editNoteSql = "update note set title = ?, content = ? where id = ?"
+
+    connection.query(editNoteSql, [requestBody.title, requestBody.content, requestBody.id], function (err, result) {
+        if (err) {
+            console.log(err)
+            response.send({
+                code: 0,
+                msg: 'sql error',
+                data: {}
+            })
+        } else {
+            response.send({
+                code: 0,
+                msg: 'Edit note successfully',
+                data: {
+                    msg: 'Edit note successfully'
+                }
+            })
+        }
+    })
+    //connection.end();
+
+})
+
+const PORT = 5000;
+app.listen(PORT, (err) => {
+    if (!err) console.log(`Server is running on port ${PORT}.`);
+});

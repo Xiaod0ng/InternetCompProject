@@ -172,10 +172,10 @@ app.post('/api/getTodoList', (request, response) => { // post request
         } else {
             response.send({
                 code: 0,
-                msg: 'Get todoList successful',
+                msg: 'Get todoList successfully',
                 data: {
                     todoList: result,
-                    msg: 'Get todoList successful'
+                    msg: 'Get todoList successfully'
                 }
             })
         }
@@ -303,7 +303,7 @@ app.post('/api/getNote', (request, response) => { // post request
                 code: 0,
                 msg: 'Get note successfully',
                 data: {
-                    todoList: result,
+                    noteList: result,
                     msg: 'Get note successfully'
                 }
             })

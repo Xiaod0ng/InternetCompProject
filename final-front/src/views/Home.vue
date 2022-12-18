@@ -9,18 +9,20 @@
       ></MenuComp>
       <TodayComp
         class="contentComp"
-        :noteList="noteList"
         :userId="userInfo.userId"
         @changeToCalendar="changeToCalendar"
         v-if="!isCalendar && menuIndex == '' && userInfo.userId"
       ></TodayComp>
       <CalendarComp
         class="contentComp"
-        :noteList="noteList"
         :userId="userInfo.userId"
         v-if="isCalendar && menuIndex == ''"
       ></CalendarComp>
-      <NoteComp class="contentComp" v-if="menuIndex == 'note'"></NoteComp>
+      <NoteComp
+        class="contentComp"
+        :userId="userInfo.userId"
+        v-if="menuIndex == 'note'"
+      ></NoteComp>
       <TodoComp
         :userId="userInfo.userId"
         class="contentComp"
@@ -51,116 +53,6 @@ export default {
         userName: "",
         userId: "",
       },
-      noteList: [
-        {
-          name: "note1",
-          content: "xxxxxxxxxxxxxx",
-        },
-        {
-          name: "note22222222222",
-          content: "xxxxxxxxxxxxxx",
-        },
-        {
-          name: "note3",
-          content: "xxxxxxxxxxxxxx",
-        },
-        {
-          name: "note4",
-        },
-        {
-          name: "note5",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-        {
-          name: "note6",
-        },
-      ],
       isCalendar: false,
       menuIndex: "",
     };

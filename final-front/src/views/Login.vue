@@ -81,7 +81,7 @@ export default {
             if (res.code === 0) {
               if (res.data.msg == "Login success") {
                 ElMessage({
-                  message: "Log in successful.",
+                  message: "Log in successfully.",
                   type: "success",
                 });
                 this.userInfo = { ...res.data.userInfo }; // get user info

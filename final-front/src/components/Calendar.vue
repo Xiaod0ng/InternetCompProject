@@ -1,38 +1,53 @@
 <template>
   <div class="calendarCom">
-    <el-calendar class="calendarCon" v-model="todayDate" @change="getDate()" />
-    <div class="dateInfo">
-      <el-scrollbar class="todayNoteScroll">
-        <div class="todayNote">
-          <div
-            class="noteItem"
-            v-for="(item, index) in noteList"
-            :key="index"
-            @click="openNoteDetail(index)"
-          >
-            <el-icon size="60px" class="noteIcon"><Document /></el-icon>
-            <span>{{ item.name }}</span>
+    <div v-if="!isNote">
+      <el-calendar
+        class="calendarCon"
+        v-model="todayDate"
+        @change="getDate()"
+      />
+      <div class="dateInfo">
+        <el-scrollbar class="todayNoteScroll">
+          <div class="todayNote">
+            <div
+              class="noteItem"
+              v-for="(item, index) in noteList"
+              :key="index"
+              @click="openNoteDetail(index)"
+            >
+              <el-icon size="60px" class="noteIcon"><Document /></el-icon>
+              <span>{{ item.title }}</span>
+            </div>
           </div>
-        </div>
-      </el-scrollbar>
-      <el-scrollbar class="todoListScroll">
-        <div class="todoList">
-          <div
-            class="todoItem"
-            v-for="(item, index) in todoList"
-            :key="item.id"
-          >
-            <el-checkbox
-              v-model="item.status"
-              :label="item.content"
-              :true-label="1"
-              :false-label="0"
-              @change="changeTodoStatus(item.status, index)"
-            />
+        </el-scrollbar>
+        <el-scrollbar class="todoListScroll">
+          <div class="todoList">
+            <div
+              class="todoItem"
+              v-for="(item, index) in todoList"
+              :key="item.id"
+            >
+              <el-checkbox
+                v-model="item.status"
+                :label="item.content"
+                :true-label="1"
+                :false-label="0"
+                @change="changeTodoStatus(item.status, index)"
+              />
+            </div>
           </div>
-        </div>
-      </el-scrollbar>
+        </el-scrollbar>
+      </div>
     </div>
+    <NoteComp
+      class="contentComp"
+      :userId="userId"
+      :isCalendarNote="isNote"
+      :calendarDate="todayDate"
+      :noteIndex="noteIndex"
+      @closeCalendarNoteDetail="closeCalendarNoteDetail"
+      v-if="isNote"
+    ></NoteComp>
   </div>
 </template>
   
@@ -40,13 +55,13 @@
 import moment from "moment";
 import { ElMessage } from "element-plus";
 import http from "../http/http.js";
+import NoteComp from "../components/Note.vue";
 export default {
   name: "CalendarComp",
+  components: {
+    NoteComp,
+  },
   props: {
-    noteList: {
-      type: Array,
-      default: () => [],
-    },
     userId: {
       type: String,
       default: "",
@@ -56,20 +71,52 @@ export default {
   data() {
     return {
       todayDate: new Date(),
+      noteList: {},
       todoList: {},
+      noteIndex: "",
+      isNote: false,
     };
   },
   mounted() {
-    this.getSelectedDate(moment(this.todayDate).format("YYYY-MM-DD"));
+    this.getSelectedDateNote(moment(this.todayDate).format("YYYY-MM-DD"));
+    this.getSelectedDateTodo(moment(this.todayDate).format("YYYY-MM-DD"));
   },
   watch: {
     todayDate(val) {
-      this.getSelectedDate(moment(val).format("YYYY-MM-DD"));
+      this.getSelectedDateNote(moment(val).format("YYYY-MM-DD"));
+      this.getSelectedDateTodo(moment(val).format("YYYY-MM-DD"));
     },
   },
   methods: {
+    // get note list by date
+    async getSelectedDateNote(val) {
+      await http
+        .post("/getNote", { date: val, userId: parseInt(this.userId) })
+        .then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Get note successfully") {
+              this.noteList = res.data.noteList;
+            } else {
+              ElMessage({
+                message: "fail to get note list.",
+                type: "error",
+              });
+            }
+          }
+        });
+    },
+    // open note detail with its index
+    openNoteDetail(index) {
+      this.isNote = true;
+      this.noteIndex = index;
+    },
+    // back to home page from note detail
+    closeCalendarNoteDetail() {
+      this.getSelectedDateNote(moment(this.todayDate).format("YYYY-MM-DD"));
+      this.isNote = false;
+    },
     // get todo list by date
-    getSelectedDate(val) {
+    getSelectedDateTodo(val) {
       http
         .post("/getTodoList", {
           date: val,
@@ -77,7 +124,7 @@ export default {
         })
         .then((res) => {
           if (res.code === 0) {
-            if (res.data.msg == "Get todoList successful") {
+            if (res.data.msg == "Get todoList successfully") {
               this.todoList = res.data.todoList;
             } else {
               ElMessage({

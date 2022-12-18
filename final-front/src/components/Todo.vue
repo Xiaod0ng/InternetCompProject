@@ -90,13 +90,13 @@ export default {
   watch: {},
   methods: {
     // get todo list on selected date
-    getSelectedDate(val) {
+    async getSelectedDate(val) {
       // console.log("selected date:" + val);
-      http
+      await http
         .post("/getTodoList", { date: val, userId: parseInt(this.userId) })
         .then((res) => {
           if (res.code === 0) {
-            if (res.data.msg == "Get todoList successful") {
+            if (res.data.msg == "Get todoList successfully") {
               this.todoList = res.data.todoList;
             } else {
               ElMessage({
@@ -125,7 +125,7 @@ export default {
           if (res.code === 0) {
             if (res.data.msg == "Add success") {
               ElMessage({
-                message: "Add Todo Item successful.",
+                message: "Add Todo Item successfully.",
                 type: "success",
               });
               this.getSelectedDate(this.dateVal);
@@ -149,7 +149,7 @@ export default {
           if (res.code === 0) {
             if (res.data.msg == "Edit success") {
               ElMessage({
-                message: "Edit Todo Item successful.",
+                message: "Edit Todo Item successfully.",
                 type: "success",
               });
               this.getSelectedDate(this.dateVal);

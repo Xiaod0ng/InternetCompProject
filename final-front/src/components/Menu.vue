@@ -19,7 +19,12 @@
     >
       <el-icon class="userIconClose" size="20px"><Avatar /></el-icon>
     </div>
-    <el-menu default-active="" :collapse="isCollapse" @select="getMenuIndex">
+    <el-menu
+      default-active=""
+      v-if="isMenu"
+      :collapse="isCollapse"
+      @select="getMenuIndex"
+    >
       <el-menu-item index="note">
         <el-icon><EditPen /></el-icon>
         <span>Note</span>
@@ -77,6 +82,7 @@ export default {
       closeDisappear: false,
       isClose: false,
       openDisappear: false,
+      isMenu: true,
     };
   },
   mounted() {},
@@ -88,7 +94,10 @@ export default {
     // go to home page
     gotoHomePage() {
       this.$emit("changeToToday");
-      this.$router.push({ name: "home" });
+      this.isMenu = false;
+      this.$nextTick(() => {
+        this.isMenu = true;
+      });
     },
     // log out
     logout() {

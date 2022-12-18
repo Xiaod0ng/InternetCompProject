@@ -1,6 +1,9 @@
 <template>
   <div class="noteCom">
-    <div class="noteList" v-if="!isAddNote">
+    <div
+      class="noteList"
+      v-if="!isNoteDetail && (!isHomeNote || !isCalendarNote)"
+    >
       <div class="datePicker">
         <el-date-picker
           v-model="dateVal"
@@ -25,48 +28,26 @@
             @click="openNoteDetail(index)"
           >
             <el-icon size="60px" class="noteIcon"><Document /></el-icon>
-            <span>{{ item.name }}</span>
+            <span>{{ item.title }}</span>
           </div>
         </div>
       </el-scrollbar>
     </div>
-    <div class="newNote" v-if="isAddNote">
+    <div class="newNote" v-if="isNoteDetail">
       <el-page-header :icon="null" @back="onBack">
         <template #title>
           <el-icon style="margin-top: 8px"><ArrowLeftBold /></el-icon>
         </template>
         <template #content>
           <div class="flex items-center">
-            <el-popover
-              placement="right"
-              trigger="hover"
-              v-if="!isTitleEdit && currentNote.name !== ''"
+            <span
+              style="font-size:22px"
+              v-if="!isEdit && currentNote.title !== ''"
             >
-              <template #reference>
-                <span class="text-large font-600 mr-3">
-                  {{ currentNote.name }}
-                </span>
-              </template>
-              <el-icon size="20px" class="editIcon" @click="editNoteTitle"
-                ><Edit
-              /></el-icon>
-            </el-popover>
-            <div class="editTitle" v-if="isTitleEdit || currentNote.name == ''">
-              <el-input v-model="noteTitle" />
-              <el-icon
-                size="20px"
-                class="editIcon"
-                @click="saveNoteTitle()"
-                style="margin: 6px"
-                ><CircleCheck
-              /></el-icon>
-              <el-icon
-                size="20px"
-                class="editIcon"
-                @click="cancelNoteTitle()"
-                style="margin: 6px 0"
-                ><CircleClose
-              /></el-icon>
+              {{ currentNote.title }}
+            </span>
+            <div class="editTitle" v-if="isEdit || currentNote.title == ''">
+              <el-input style="font-size:20px" maxlength="32" v-model="currentNote.title" />
             </div>
           </div>
         </template>
@@ -81,12 +62,18 @@
               @click="cancelEdit"
               >Cancel</el-button
             >
+            <el-button
+              type="default"
+              v-if="!isEdit && currentIndex !== -1"
+              @click="deleteNote"
+              >Delete</el-button
+            >
           </div>
         </template>
       </el-page-header>
       <div class="noteArea">
         <el-input
-          v-model="noteArea"
+          v-model="currentNote.content"
           :rows="24"
           maxlength="1872"
           type="textarea"
@@ -99,198 +86,218 @@
   
 <script>
 import moment from "moment";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import http from "../http/http.js";
 export default {
   name: "NoteCom",
-  props: {},
+  props: {
+    userId: {
+      type: String,
+      default: "",
+      require: true,
+    },
+    isHomeNote: {
+      type: Boolean,
+      default: false,
+    },
+    isCalendarNote: {
+      type: Boolean,
+      default: false,
+    },
+    todayDate: {
+      type: String,
+      default: "",
+    },
+    calendarDate: {
+      type: Date,
+      default: new Date(),
+    },
+    noteIndex: {
+      type: Number,
+      default: 0,
+    },
+  },
   data() {
     return {
       dateVal: moment(new Date()).format("YYYY-MM-DD"),
-      noteList: [
-        {
-          name: "note1",
-          content: "xxxxxxxxxxxxxxxxxx",
-        },
-        {
-          name: "note22222222222",
-          content: "xxxxxxxxxxxxxxxxxx",
-        },
-        {
-          name: "note3",
-          content: "xxxxxxxxxxxxxxxxxx",
-        },
-        {
-          name: "note1",
-        },
-        {
-          name: "note1",
-        },
-        {
-          name: "note22222222222",
-        },
-        {
-          name: "note3",
-        },
-        {
-          name: "note1",
-        },
-        {
-          name: "note1",
-        },
-        {
-          name: "note22222222222",
-        },
-        {
-          name: "note3",
-        },
-        {
-          name: "note1",
-        },
-      ],
-      isAddNote: false,
+      noteList: [],
+      isNoteDetail: false,
       isEdit: false,
-      isTitleEdit: false,
       currentNote: {
-        name: "",
+        title: "",
         content: "",
       },
       currentIndex: -1,
-      noteArea: "",
-      noteTitle: "",
     };
   },
-  mounted() {},
+  async mounted() {
+    if (this.isHomeNote) {
+      await this.getSelectedDate(this.todayDate);
+      this.currentIndex = this.noteIndex;
+      this.currentNote = { ...this.noteList[this.currentIndex] };
+      this.isNoteDetail = true;
+    } else if (this.isCalendarNote) {
+      await this.getSelectedDate(
+        moment(this.calendarDate).format("YYYY-MM-DD")
+      );
+      this.currentIndex = this.noteIndex;
+      this.currentNote = { ...this.noteList[this.currentIndex] };
+      this.isNoteDetail = true;
+    } else {
+      this.getSelectedDate(this.dateVal);
+    }
+  },
   watch: {},
   methods: {
     // get selected date
-    getSelectedDate(val) {
-      console.log("selected date:" + val);
-      this.noteList = [
-        {
-          name: "note1",
-        },
-        {
-          name: "note22222222222",
-        },
-        {
-          name: "note3",
-        },
-      ];
+    async getSelectedDate(val) {
+      // console.log("selected date:" + val);
+      await http
+        .post("/getNote", { date: val, userId: parseInt(this.userId) })
+        .then((res) => {
+          if (res.code === 0) {
+            if (res.data.msg == "Get note successfully") {
+              this.noteList = res.data.noteList;
+            } else {
+              ElMessage({
+                message: "fail to get note list.",
+                type: "error",
+              });
+            }
+          }
+        });
     },
     // open note detail with its index
     openNoteDetail(index) {
-      console.log(
-        "open No." +
-          (index + 1) +
-          " note, its name is " +
-          this.noteList[index].name
-      );
       this.currentIndex = index;
       this.currentNote = { ...this.noteList[index] };
-      this.noteArea = this.currentNote.content;
-      this.isAddNote = true;
+      this.isNoteDetail = true;
+      console.log(this.isCalendarNote, this.isHomeNote, this.isNoteDetail)
     },
     // create a new note
     createNewNote() {
-      this.isAddNote = true;
+      this.isNoteDetail = true;
       this.isEdit = true;
-      this.isTitleEdit = true;
       this.currentNote = {
-        name: "",
+        title: "",
         content: "",
       };
       this.currentIndex = -1;
-      this.noteArea = "";
     },
     // back to note list page
     onBack() {
+      if (this.isHomeNote) {
+        this.$emit("closeNoteDetail");
+      }
+      if (this.isCalendarNote) {
+        this.$emit("closeCalendarNoteDetail");
+      }
       this.currentIndex = -1;
       this.currentNote = {
-        name: "",
+        title: "",
         content: "",
       };
-      this.noteArea = "";
-      this.noteTitle = "";
-      this.isAddNote = false;
+      this.isNoteDetail = false;
       this.isEdit = false;
-      this.isTitleEdit = false;
     },
     // text area to edit or save
     changeEditStatus() {
       if (this.isEdit) {
         if (this.currentIndex == -1) {
-          if (this.noteArea == "") {
+          if (this.currentNote.title == "") {
             ElMessage({
-              message: "Please input note content first",
-              type: "error",
+              message: "Please input note title.",
+              type: "warning",
             });
           } else {
-            console.log("add a new note content");
-            this.currentIndex = this.noteList.size;
-            this.currentNote = {
-              name: "Untitled",
-              content: this.noteArea,
+            let obj = {
+              ...this.currentNote,
+              date: this.dateVal,
+              userId: parseInt(this.userId),
             };
-            this.noteList.push(this.currentNote);
-            this.isEdit = !this.isEdit;
-            this.isTitleEdit = false;
+            http.post("/noteAdd", obj).then(async (res) => {
+              if (res.code === 0) {
+                if (res.data.msg == "Add note successfully") {
+                  ElMessage({
+                    message: "Add note successful.",
+                    type: "success",
+                  });
+                  await this.getSelectedDate(this.dateVal);
+                  this.currentIndex = this.noteList.length - 1;
+                  this.currentNote = { ...this.noteList[this.currentIndex] };
+                  this.isEdit = !this.isEdit;
+                } else {
+                  ElMessage({
+                    message: "fail to add new note.",
+                    type: "error",
+                  });
+                }
+              }
+            });
           }
         } else {
-          this.currentNote.content = this.noteArea;
-          this.noteList[this.currentIndex] = { ...this.currentNote };
-          this.isEdit = !this.isEdit;
+          let obj = {
+            ...this.currentNote,
+            userId: parseInt(this.userId),
+          };
+          http.post("/noteEdit", obj).then(async (res) => {
+            if (res.code === 0) {
+              if (res.data.msg == "Edit note successfully") {
+                ElMessage({
+                  message: "Edit selected note successfully.",
+                  type: "success",
+                });
+                await this.getSelectedDate(this.dateVal);
+                this.currentNote = { ...this.noteList[this.currentIndex] };
+                this.isEdit = !this.isEdit;
+              } else {
+                ElMessage({
+                  message: "fail to edit selected note.",
+                  type: "error",
+                });
+              }
+            }
+          });
         }
-        console.log("save edit:", this.noteList);
       } else {
         this.isEdit = !this.isEdit;
       }
     },
     // cancel text area edit
     cancelEdit() {
-      if (this.currentIndex == -1) {
-        ElMessage({
-          message: "Please input note content first",
-          type: "error",
-        });
-      } else {
-        this.noteArea = this.currentNote.content;
-        this.isEdit = !this.isEdit;
-        console.log("cancel edit");
-      }
+      this.isEdit = !this.isEdit;
     },
-    // edit note title
-    editNoteTitle() {
-      this.isTitleEdit = true;
-      this.noteTitle = this.currentNote.name;
-    },
-    // save note title edit
-    saveNoteTitle() {
-      this.currentNote.name = this.noteTitle;
-      if (this.currentIndex == -1) {
-        if (this.noteTitle == "") {
-          ElMessage({
-            message: "Please input note title first",
-            type: "error",
+    // delete note
+    deleteNote() {
+      ElMessageBox.confirm("Confirm delete selected note?", "Warning", {
+        confirmButtonText: "Ok",
+        cancelButtonText: "Cancel",
+        type: "warning",
+      }).then(async () => {
+        await http
+          .post("/noteDelete", {
+            id: parseInt(this.noteList[this.currentIndex].id),
+          })
+          .then((res) => {
+            if (res.code === 0) {
+              if (res.data.msg == "Delete note successfully") {
+                ElMessage({
+                  message: "Delete note successfully.",
+                  type: "success",
+                });
+                this.getSelectedDate(this.dateVal);
+                setTimeout(() => {
+                  this.onBack();
+                }, 1000);
+              } else {
+                ElMessage({
+                  message: "fail to delete note.",
+                  type: "error",
+                });
+              }
+            }
           });
-        } else {
-          console.log("add a new note title ");
-          this.currentIndex = this.noteList.size;
-          this.noteList.push(this.currentNote);
-        }
-      } else {
-        this.noteList[this.currentIndex] = { ...this.currentNote };
-      }
-      this.isTitleEdit = false;
-    },
-    // cancel note title edit
-    cancelNoteTitle() {
-      if (this.currentIndex == -1) {
-        ElMessage({
-          message: "Please input note title first",
-          type: "error",
-        });
-      }
-      this.isTitleEdit = false;
+      });
     },
   },
 };

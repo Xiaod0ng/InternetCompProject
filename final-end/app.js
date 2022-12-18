@@ -130,7 +130,7 @@ app.post('/api/todoAdd', (request, response) => { // post request
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
 
-    var addTodoSql = "insert into todoList (date, content, userId, status) values (?, ?, ?, ?)"
+    var addTodoSql = "insert into todo (date, content, userId, status) values (?, ?, ?, ?)"
 
     connection.query(addTodoSql, [requestBody.date, requestBody.content, requestBody.userId, requestBody.status], function (err, result) {
         if (err) {
@@ -162,7 +162,7 @@ app.post('/api/getTodoList', (request, response) => { // post request
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
 
-    var getTodoListSql = "select * from todoList where date = ? and userId = ?"
+    var getTodoListSql = "select * from todo where date = ? and userId = ?"
 
     connection.query(getTodoListSql, [requestBody.date, requestBody.userId], function (err, result) {
         if (err) {
@@ -195,7 +195,7 @@ app.post('/api/todoDelete', (request, response) => { // post request
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
 
-    var deleteTodoSql = "delete from todoList where id = ? "
+    var deleteTodoSql = "delete from todo where id = ? "
 
     connection.query(deleteTodoSql, [requestBody.id], function (err, result) {
         if (err) {
@@ -227,7 +227,7 @@ app.post('/api/todoEdit', (request, response) => { // post request
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
 
-    var editTodoSql = "update todoList set content = ?, status = ? where id = ?"
+    var editTodoSql = "update todo set content = ?, status = ? where id = ?"
 
     connection.query(editTodoSql, [requestBody.content, requestBody.status, requestBody.id], function (err, result) {
         if (err) {

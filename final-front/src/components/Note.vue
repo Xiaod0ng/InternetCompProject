@@ -209,11 +209,6 @@ export default {
               message: "Please input note title.",
               type: "warning",
             });
-          } else if (this.currentNote.content == "") {
-            ElMessage({
-              message: "Please input note content.",
-              type: "warning",
-            });
           } else {
             let obj = {
               ...this.currentNote,

@@ -40,10 +40,11 @@
           </el-popover>
         </div>
       </div>
+      <div class="todoEmpty" v-if="todoList.length == 0">No Todo Task</div>
     </el-scrollbar>
     <el-dialog
       v-model="addDialogVisible"
-      :title="editIndex == -1 ? 'Add New Todo Item' : 'Edit Todo Item'"
+      :title="editIndex == -1 ? 'Add New Todo Task' : 'Edit Todo Task'"
       width="30%"
       :before-close="handleClose"
     >
@@ -100,7 +101,7 @@ export default {
               this.todoList = res.data.todoList;
             } else {
               ElMessage({
-                message: "fail to get Todo List.",
+                message: "fail to get todo list.",
                 type: "error",
               });
             }
@@ -125,13 +126,13 @@ export default {
           if (res.code === 0) {
             if (res.data.msg == "Add success") {
               ElMessage({
-                message: "Add Todo Item successfully.",
+                message: "Add todo task successfully.",
                 type: "success",
               });
               this.getSelectedDate(this.dateVal);
             } else {
               ElMessage({
-                message: "fail to add new Todo Item.",
+                message: "fail to add new todo task.",
                 type: "error",
               });
             }
@@ -149,13 +150,13 @@ export default {
           if (res.code === 0) {
             if (res.data.msg == "Edit success") {
               ElMessage({
-                message: "Edit Todo Item successfully.",
+                message: "Edit todo task successfully.",
                 type: "success",
               });
               this.getSelectedDate(this.dateVal);
             } else {
               ElMessage({
-                message: "fail to add new Todo Item.",
+                message: "fail to add new todo task.",
                 type: "error",
               });
             }
@@ -198,7 +199,7 @@ export default {
     },
     // delete todo item
     deleteTodoItem(id) {
-      ElMessageBox.confirm("Confirm delete selected todo item?", "Warning", {
+      ElMessageBox.confirm("Confirm delete selected todo task?", "Warning", {
         confirmButtonText: "Ok",
         cancelButtonText: "Cancel",
         type: "warning",
@@ -213,7 +214,7 @@ export default {
               this.getSelectedDate(this.dateVal);
             } else {
               ElMessage({
-                message: "fail to delete Todo Item.",
+                message: "fail to delete todo task.",
                 type: "error",
               });
             }
@@ -258,6 +259,10 @@ export default {
           text-decoration: line-through;
         }
       }
+    }
+    .todoEmpty {
+      padding-top: 10px;
+      color: #909399;
     }
   }
 }

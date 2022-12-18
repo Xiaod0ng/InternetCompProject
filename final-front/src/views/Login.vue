@@ -77,7 +77,7 @@ export default {
       var that = this;
       this.$refs["loginForm"].validate((valid) => {
         if (valid) {
-          http.get("/userLogin", this.loginForm).then((res) => {
+          http.post("/userLogin", this.loginForm).then((res) => {
             if (res.code === 0) {
               if (res.data.msg == "Login success") {
                 ElMessage({

@@ -24,18 +24,21 @@ app.use((request, response, next) => { // listener
 const connection = require("./dbconfig/db.js")
 
 // user log in
-app.get('/api/userLogin', (request, response) => { // get request
+app.post('/api/userLogin', (request, response) => { // get request
 
     //connection.getConnection();
 
-    console.log(request.query) // query: { name: 'dqwd', password: 'qdwd' },
-    var requestQuery = request.query;
+    // console.log(request.query) // query: { name: 'dqwd', password: 'qdwd' },
+    // var requestQuery = request.query;
+
+    console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
+    var requestBody = request.body;
 
     var loginSql = "select * from user where userName = ?";
 
-    connection.query(loginSql, [requestQuery.name], function (err, result) {
+    connection.query(loginSql, [requestBody.name], function (err, result) {
         if (result && result.length > 0) {
-            if (result[0].userPassword == requestQuery.password) {
+            if (result[0].userPassword == requestBody.password) {
                 response.send({
                     code: 0,
                     msg: 'Login success',

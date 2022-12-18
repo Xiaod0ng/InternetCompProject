@@ -19,6 +19,7 @@
               <span>{{ item.title }}</span>
             </div>
           </div>
+          <div style="color: #909399" v-if="noteList.length == 0">No Note</div>
         </el-scrollbar>
         <el-scrollbar class="todoListScroll">
           <div class="todoList">
@@ -36,6 +37,7 @@
               />
             </div>
           </div>
+          <div class="todoEmpty" v-if="todoList.length == 0">No Todo Task</div>
         </el-scrollbar>
       </div>
     </div>
@@ -200,6 +202,7 @@ export default {
       }
     }
     .todoListScroll {
+      width: 36%;
       padding-left: 16px;
       height: 220px;
       .todoList {
@@ -212,6 +215,11 @@ export default {
             text-decoration: line-through;
           }
         }
+      }
+      .todoEmpty {
+        padding-top: 10px;
+        margin:auto;
+        color: #909399;
       }
     }
   }

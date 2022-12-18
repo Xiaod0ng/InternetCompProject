@@ -40,6 +40,12 @@
           </div>
         </div>
       </el-scrollbar>
+      <div
+        style="color: #909399"
+        v-if="noteList.length == 0 && todoList.length == 0"
+      >
+        Do not add any note or todo task today.
+      </div>
     </div>
     <NoteComp
       class="contentComp"

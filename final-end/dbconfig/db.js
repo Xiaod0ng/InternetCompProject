@@ -2,7 +2,7 @@ var fs = require("fs");
 var mysql = require("mysql");
 const dbConfig = require("./db.config.js");
 
-const serverCa = [fs.readFileSync("./DigiCertGlobalRootCA.crt.pem", "utf-8")];
+const serverCa = [fs.readFileSync("../final-end/dbconfig/DigiCertGlobalRootCA.crt.pem", "utf-8")];
 
 var connection = mysql.createPool({
   host: dbConfig.HOST,

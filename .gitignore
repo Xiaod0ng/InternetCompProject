@@ -1,5 +1,4 @@
 final-end/node_modules/
 final-front/node_modules/
-final-end/dbconfig/db.config.js
 final-end/dbconfig/PROD/db.config.js
 final-end/dbconfig/PROD/DigiCertGlobalRootCA.crt.pem

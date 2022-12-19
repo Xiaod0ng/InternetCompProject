@@ -3,4 +3,4 @@ final-front/node_modules/
 final-end/dbconfig/PROD/db.config.js
 final-end/dbconfig/PROD/DigiCertGlobalRootCA.crt.pem
 node_modules/
-.gitignore
+final-front/dist/

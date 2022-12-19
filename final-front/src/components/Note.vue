@@ -15,12 +15,12 @@
           :clearable="false"
           @change="getSelectedDate"
         />
+        <div class="noteItemAdd" @click="createNewNote()">
+          <el-icon class="addNoteIcon" size="25px"><Plus /></el-icon>
+        </div>
       </div>
-      <el-scrollbar class="todayNoteScroll">
+      <el-scrollbar class="noteScroll">
         <div class="todayNote">
-          <div class="noteItemAdd" @click="createNewNote()">
-            <el-icon class="addNoteIcon" size="30px"><Plus /></el-icon>
-          </div>
           <div
             class="noteItem"
             v-for="(item, index) in noteList"
@@ -31,6 +31,7 @@
             <span>{{ item.title }}</span>
           </div>
         </div>
+        <div class="noteEmpty" v-if="noteList.length == 0">No Note</div>
       </el-scrollbar>
     </div>
     <div class="newNote" v-if="isNoteDetail">
@@ -41,13 +42,17 @@
         <template #content>
           <div class="flex items-center">
             <span
-              style="font-size:22px"
+              style="font-size: 22px"
               v-if="!isEdit && currentNote.title !== ''"
             >
               {{ currentNote.title }}
             </span>
             <div class="editTitle" v-if="isEdit || currentNote.title == ''">
-              <el-input style="font-size:20px" maxlength="32" v-model="currentNote.title" />
+              <el-input
+                style="font-size: 20px"
+                maxlength="32"
+                v-model="currentNote.title"
+              />
             </div>
           </div>
         </template>
@@ -172,7 +177,7 @@ export default {
       this.currentIndex = index;
       this.currentNote = { ...this.noteList[index] };
       this.isNoteDetail = true;
-      console.log(this.isCalendarNote, this.isHomeNote, this.isNoteDetail)
+      console.log(this.isCalendarNote, this.isHomeNote, this.isNoteDetail);
     },
     // create a new note
     createNewNote() {
@@ -313,8 +318,19 @@ export default {
     .datePicker {
       text-align: left;
       padding: 16px 0 0 16px;
+      display: flex;
+      flex-direction: row;
+      .noteItemAdd {
+        overflow: hidden;
+        margin: 4px 16px;
+        cursor: pointer;
+        .addNoteIcon {
+          border: 3px #c0c4cc solid;
+        }
+      }
     }
-    .todayNoteScroll {
+
+    .noteScroll {
       padding-top: 20px;
       height: calc(100% - 85px);
       .todayNote {
@@ -339,20 +355,11 @@ export default {
             text-overflow: ellipsis;
           }
         }
-        .noteItemAdd {
-          width: 80px;
-          height: 90px;
-          display: flex;
-          justify-content: center;
-          margin: 11px 8px;
-          overflow: hidden;
-          cursor: pointer;
-          .addNoteIcon {
-            margin-top: 12px;
-            border: 3px #c0c4cc solid;
-          }
-        }
       }
+    }
+    .noteEmpty {
+      padding-top: 50px;
+      color: #909399;
     }
   }
   .newNote {

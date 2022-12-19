@@ -173,8 +173,8 @@ export default {
     display: flex;
     flex-direction: row;
     .todayNoteScroll {
-      height: 220px;
-      padding-top: 10px;
+      height: 208px;
+      margin: 12px 0;
       border-right: 1px #dcdfe6 solid;
       width: 64%;
       .todayNote {
@@ -183,7 +183,7 @@ export default {
         overflow-x: hidden;
         .noteItem {
           width: 80px;
-          height: 90px;
+          height: 85px;
           display: flex;
           flex-direction: column;
           text-align: center;
@@ -203,8 +203,8 @@ export default {
     }
     .todoListScroll {
       width: 36%;
-      padding-left: 16px;
-      height: 220px;
+      padding: 6px 16px 0 0;
+      height: 214px;
       .todoList {
         display: block;
         text-align: left;
@@ -218,7 +218,7 @@ export default {
       }
       .todoEmpty {
         padding-top: 10px;
-        margin:auto;
+        margin: auto;
         color: #909399;
       }
     }

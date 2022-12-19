@@ -15,6 +15,9 @@
           :clearable="false"
           @change="getSelectedDate"
         />
+        <div class="noteItemAdd" @click="createNewNote()">
+          <el-icon class="addNoteIcon" size="25px"><Plus /></el-icon>
+        </div>
       </div>
       <el-scrollbar class="noteScroll">
         <div class="todayNote">
@@ -27,8 +30,8 @@
             <el-icon size="60px" class="noteIcon"><Document /></el-icon>
             <span>{{ item.title }}</span>
           </div>
-          <div class="noteEmpty" v-if="noteList.length == 0">No Note</div>
         </div>
+        <div class="noteEmpty" v-if="noteList.length == 0">No Note</div>
       </el-scrollbar>
     </div>
     <div class="newNote" v-if="isNoteDetail">
@@ -326,6 +329,7 @@ export default {
         }
       }
     }
+
     .noteScroll {
       padding-top: 20px;
       height: calc(100% - 85px);
@@ -373,4 +377,3 @@ export default {
 }
 </style>
 
-  

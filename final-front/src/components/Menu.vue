@@ -149,12 +149,13 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 86%;
     height: 80px;
     border-bottom: 1px #dcdfe6 solid;
     font-size: 22px;
     text-align: center;
     z-index: 999;
+    margin: 0 7%;
     .userIcon {
       padding: 6px;
       border: 1px solid;
@@ -166,12 +167,13 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    width: 63px;
+    width: 41px;
     height: 80px;
-    padding-top: 10px;
+    margin: 0 10px;
     border-bottom: 1px #dcdfe6 solid;
     z-index: 999;
     .userIconClose {
+      margin-top: 20px;
       padding: 4px;
       border: 1px solid;
       border-radius: 20px;

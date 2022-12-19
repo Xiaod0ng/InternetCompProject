@@ -12,7 +12,7 @@
         @change="getSelectedDate"
       />
       <div class="todoItemAdd" @click="addNewTodoList">
-        <el-icon class="addNoteIcon" size="25px"><Plus /></el-icon>
+        <el-icon class="addTodoIcon" size="25px"><Plus /></el-icon>
       </div>
     </div>
     <el-scrollbar class="todoListScroll">
@@ -241,7 +241,7 @@ export default {
       overflow: hidden;
       margin: 4px 16px;
       cursor: pointer;
-      .addNoteIcon {
+      .addTodoIcon {
         border: 3px #c0c4cc solid;
       }
     }
@@ -261,7 +261,7 @@ export default {
       }
     }
     .todoEmpty {
-      padding-top: 10px;
+      padding-top: 62px;
       color: #909399;
     }
   }

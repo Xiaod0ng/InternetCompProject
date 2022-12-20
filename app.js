@@ -373,7 +373,7 @@ app.get('/', (request, response) => {
     response.sendFile(process.cwd() + './final-front/dist/index.html');
 })
 
-const PORT = 8080;
+const PORT = 5000;
 app.listen(PORT, (err) => {
     if (!err) console.log(`Server is running on port ${PORT}.`);
 });

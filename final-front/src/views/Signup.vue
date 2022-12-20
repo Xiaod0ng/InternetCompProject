@@ -60,7 +60,6 @@ export default {
   data() {
     // check whether the two password inputs are consistent
     const validateComfirmPassword = (rule, value, callback) => {
-      console.log(this.signupForm);
       if (value === this.signupForm.password) {
         callback();
       } else {

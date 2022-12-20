@@ -177,7 +177,6 @@ export default {
       this.currentIndex = index;
       this.currentNote = { ...this.noteList[index] };
       this.isNoteDetail = true;
-      console.log(this.isCalendarNote, this.isHomeNote, this.isNoteDetail);
     },
     // create a new note
     createNewNote() {

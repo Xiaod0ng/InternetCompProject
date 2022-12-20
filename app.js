@@ -369,7 +369,7 @@ app.post('/api/noteEdit', (request, response) => { // post request
 
 })
 
-app.get('/', (request, response) => {
+app.get('/api', (request, response) => {
     response.sendFile(process.cwd() + '/final-front/dist/index.html');
 })
 

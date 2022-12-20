@@ -1,1 +1,20 @@
-1111
+# Planner
+
+## 1. Import tables into the database
+Open MySQL Workbench, select Server > Data Import, choose final-database as the option of Import from Dump Project Folder. 
+
+## 2. Set up database connection
+Open /final-end/dbconfig/db.config.js, input the HOST, USER, PASSWORD and DATABASE.
+
+## 3. Project setup
+In final-end and final-front, run ```npm i``` to install the dependencies.
+
+## 4. Run server side
+Go to final-end folder, run ```node app.js``` to start the server.
+
+## 5. Run client side
+Go to final-front folder, run ```npm run serve``` to compile the front end files.
+
+## 6. Open website
+Open http://localhost:8080 to navigate the website.
+

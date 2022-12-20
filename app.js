@@ -370,7 +370,7 @@ app.post('/api/noteEdit', (request, response) => { // post request
 })
 
 app.get('/', (request, response) => {
-    response.sendFile(process.cwd() + '/final-front/dist/index.html');
+    response.sendFile(__dirname + '/final-front/dist/index.html');
 })
 
 const PORT = 5000;

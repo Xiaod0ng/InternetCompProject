@@ -1,18 +1,12 @@
 const express = require('express')
-//const cors = require("cors");
 
 const app = express()
-
-// var corsOptions = {
-//     origin: "http://localhost:8081"
-// }
-
-//app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+app.use(express.static(process.cwd() + '/final-front/dist'));
 
 
 app.use((request, response, next) => { // listener 
@@ -25,11 +19,6 @@ const connection = require("./dbconfig/db.js")
 
 // user log in
 app.post('/api/userLogin', (request, response) => { // get request
-
-    //connection.getConnection();
-
-    // console.log(request.query) // query: { name: 'dqwd', password: 'qdwd' },
-    // var requestQuery = request.query;
 
     console.log(request.body) // query: { name: 'dqwd', password: 'qdwd' },
     var requestBody = request.body;
@@ -378,6 +367,10 @@ app.post('/api/noteEdit', (request, response) => { // post request
     })
     //connection.end();
 
+})
+
+app.get('/', (request, response) => {
+    response.sendFile(process.cwd() + '/final-front/dist/index.html');
 })
 
 const PORT = 5000;

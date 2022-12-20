@@ -269,6 +269,7 @@ export default {
     },
     // cancel text area edit
     cancelEdit() {
+      this.currentNote = { ...this.noteList[this.currentIndex] };
       this.isEdit = !this.isEdit;
     },
     // delete note

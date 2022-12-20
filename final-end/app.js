@@ -50,15 +50,15 @@ app.post('/api/userLogin', (request, response) => { // get request
                         msg: 'Login success'
                     }
                 })
+            } else {
+                response.send({
+                    code: 0,
+                    msg: 'Please input correct user name or password',
+                    data: {
+                        msg: 'Please input correct user name or password'
+                    }
+                })
             }
-        } else {
-            response.send({
-                code: 0,
-                msg: 'Please input correct user name or password',
-                data: {
-                    msg: 'Please input correct user name or password'
-                }
-            })
         }
         //connection.end();
 

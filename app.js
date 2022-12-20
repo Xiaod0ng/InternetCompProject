@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-app.use(express.static(process.cwd() + './final-front/dist'));
+app.use(express.static(process.cwd() + '/final-front/dist'));
 
 
 app.use((request, response, next) => { // listener 
@@ -370,7 +370,7 @@ app.post('/api/noteEdit', (request, response) => { // post request
 })
 
 app.get('/', (request, response) => {
-    response.sendFile(process.cwd() + './final-front/dist/index.html');
+    response.sendFile(process.cwd() + '/final-front/dist/index.html');
 })
 
 const PORT = 5000;
